@@ -1,0 +1,201 @@
+# An example of an HA Kubernetes cluster for RKE
+nodes:
+- address: 192.168.235.114
+  port: "22"
+  internal_address: 10.0.0.25
+  role:
+  - controlplane
+  - etcd
+  hostname_override: "master-1"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+- address: 192.168.235.124
+  port: "22"
+  internal_address: 10.0.0.5
+  role:
+  - controlplane
+  - etcd
+  hostname_override: "master-2"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+- address: 192.168.235.103
+  port: "22"
+  internal_address: 10.0.0.11
+  role:
+  - controlplane
+  - etcd
+  hostname_override: "master-3"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+- address: 192.168.235.134
+  port: "22"
+  internal_address: 10.0.0.14
+  role:
+  - worker
+  hostname_override: "node-1"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+  labels:
+    app: ingress
+- address: 192.168.235.127
+  port: "22"
+  internal_address: 10.0.0.6
+  role:
+  - worker
+  hostname_override: "node-2"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+  labels:
+    app: ingress
+- address: 192.168.235.131
+  port: "22"
+  internal_address: 10.0.0.17
+  role:
+  - worker
+  hostname_override: "node-3"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+  labels:
+    app: ingress
+- address: 192.168.235.123
+  port: "22"
+  internal_address: 10.0.0.4
+  role:
+  - worker
+  hostname_override: "node-4"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+  labels:
+    app: ingress
+- address: 192.168.235.120
+  port: "22"
+  internal_address: 10.0.0.13
+  role:
+  - worker
+  hostname_override: "node-5"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+  labels:
+    app: ingress
+- address: 192.168.235.128
+  port: "22"
+  internal_address: 10.0.0.10
+  role:
+  - worker
+  hostname_override: "node-6"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+  labels:
+    app: ingress
+- address: 192.168.235.121
+  port: "22"
+  internal_address: 10.0.0.19
+  role:
+  - worker
+  hostname_override: "node-7"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+  labels:
+    app: ingress
+- address: 192.168.235.104
+  port: "22"
+  internal_address: 10.0.0.16
+  role:
+  - worker
+  hostname_override: "node-8"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+  labels:
+    app: ingress
+- address: 192.168.235.126
+  port: "22"
+  internal_address: 10.0.0.20
+  role:
+  - worker
+  hostname_override: "node-9"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+  labels:
+    app: ingress
+- address: 192.168.235.117
+  port: "22"
+  internal_address: 10.0.0.9
+  role:
+  - worker
+  hostname_override: "node-10"
+  user: ubuntu
+  ssh_key_path: "~/.ssh/cmcc-dev"
+  labels:
+    app: ingress
+services:
+  etcd:
+    backup_config:
+      enabled: true
+      interval_hours: 6
+      retention: 12
+    extra_args:
+      quota-backend-bytes: '4294967296'
+      max-request-bytes: '33554432'
+  kube-api:
+    service_cluster_ip_range: 10.43.0.0/16
+    service_node_port_range: 30000-32767
+    pod_security_policy: false
+    always_pull_images: false
+  kube-controller:
+    #canal
+    #cluster_cidr: 10.42.0.0/16
+    #flannel 
+    cluster_cidr: 10.244.0.0/16
+    #calico
+    #cluster_cidr: 192.168.0.0/16
+    service_cluster_ip_range: 10.43.0.0/16
+    extra_args:
+      node-cidr-mask-size: '24'
+      pod-eviction-timeout: '1m'
+  kubelet:
+    cluster_domain: cluster.local
+    cluster_dns_server: 10.43.0.10
+    fail_swap_on: false
+    extra_args:
+      pod-manifest-path: "/etc/kubernetes/manifest/"
+      root-dir:  "/var/lib/kubelet"
+      docker-root: "/var/lib/docker"
+      max-pods: 250
+      kube-api-burst: '100'
+      kube-api-qps: '100'
+      max-open-files: '2000000'
+      enforce-node-allocatable: 'pods'
+      system-reserved: 'cpu=0.5,memory=500Mi'
+      kube-reserved: 'cpu=0.5,memory=1000Mi'
+      eviction-hard: 'memory.available<500Mi,nodefs.available<10%,imagefs.available<15%,nodefs.inodesFree<5%'
+  #kubeproxy enable ipvs mode
+  kubeproxy:
+    extra_args:
+      proxy-mode: "ipvs"
+network:
+  #plugin: canal
+  plugin: flannel
+  options: 
+    flannel_backend_type: vxlan
+  #  flannel_backend_type: host-gw
+authentication:
+  strategy: x509
+ssh_key_path: "~/.ssh/cmcc-dev"
+ssh_agent_auth: false
+authorization:
+  mode: rbac
+ignore_docker_version: false
+kubernetes_version: "v1.15.11-rancher1-2"
+private_registries:
+- url: registry.cn-hangzhou.aliyuncs.com
+  user: ""
+  password: ""
+  is_default: true
+ingress:                
+  provider: "nginx"
+  node_selector:         
+    app: ingress
+cluster_name: "kubernetes"
+restore:
+  restore: false
+  snapshot_name: ""
