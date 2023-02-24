@@ -1,7 +1,7 @@
 # 在线安装kubernetes脚本使用说明：
 
 # CentOS7内核默认使用3.10版本，建议将内核升级至5.4以上版本
-# CentOS7内核升级脚本：https://gitee.com/jiruichao-ops/scripts/tree/master/Linux-update-kernal/centos7
+# CentOS7内核升级脚本：https://github.com/jiruichao/scripts/tree/main/Linux-update-kernal/centos7
 
 # 配置节点IP地址变量：
 # 1. KUBE_VERSION 需要安装的kubernetes的版本
