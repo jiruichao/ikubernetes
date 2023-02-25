@@ -1,0 +1,37 @@
+# 在线安装kubernetes脚本使用说明：
+
+# CentOS7内核默认使用3.10版本，建议将内核升级至5.4以上版本
+# CentOS7内核升级脚本：https://gitee.com/jiruichao-ops/scripts/tree/master/Linux-update-kernal/centos7
+
+# 配置节点IP地址变量：
+# 1. KUBE_VERSION 需要安装的kubernetes的版本
+# 2. KUBEAPI_IP schedulerendpoint的IP
+# 3. MASTER1_IP 第1个master节点的IP
+# 4. MASTER2_IP 第2个master节点的IP
+# 5. MASTER3_IP 第3个master节点的IP
+# 6. NODE1_IP 第1个node节点的IP
+# 7. NODE2_IP 第2个node节点的IP
+# 8. NODE3_IP 第3个node节点的IP
+# 9. NODE*_IP 如果有更多的node节点可继续配置node ip地址的变量
+# 10. HARBOR_IP harbor仓库地址的IP，默认是注释不生效的，如需配置使用harbor仓库可开启配置该变量的值
+
+# 配置节点主机名变量：
+# 1. MASTER1 第1个master节点的主机名
+# 2. MASTER2 第2个master节点的主机名
+# 3. MASTER3 第3个master节点的主机名
+# 4. NODE1 第1个node节点的主机名
+# 5. NODE2 第1个node节点的主机名
+# 6. NODE3 第1个node节点的主机名
+# 7. NODE* 如果有更多的node节点可继续配置node节点的主机名
+# 8. HARBOR harbor仓库的主机名，默认是注释不生效的，如需配置使用harbor仓库可开启配置该变量的值
+
+# 安装前说明：
+# 1. CNI默认使用calico,calico部署的yaml文件在ikubernetes/calico目录下，安装前请先执行文件重命名命令：mv calico-v*.**.*.yaml calico.yaml
+#    如果想使用Flannel网络插件可注释掉脚本中的install_calico函数，打开install_flannel函数的注释，将集群初始化命令的CALICO_NETWORK变量修改为FLANNEL_NETWORK,不修改默认pod网络默认使用192.168.0.0/16网络
+# 2. 只需要在第一个master节点选择：1 初始化新的Kubernetes集群
+# 3. 其他节点（master或node）选择：2 加入已有的Kubernetes集群
+# 4. 最后在除了第一个master节点的其他节点执行加入集群的命令kubeadm join即可，初始化的输出信息将会保留在当前目录的kubeadm-init.log文件中备份，以便于后续使用
+
+
+
+

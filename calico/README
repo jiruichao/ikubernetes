@@ -1,0 +1,15 @@
+# calico v3.24.5支持以下kubernetes版本
+v1.22
+v1.23
+v1.24
+v1.25
+
+# calico v3.23.5支持以下kubernetes版本
+v1.21
+v1.22
+v1.23
+
+# calico v3.21.6支持以下kubernetes版本
+v1.20
+v1.21
+v1.22
